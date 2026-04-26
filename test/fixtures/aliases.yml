@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  aliasable: one
+  aliasable_type: Aliasable
+
+two:
+  name: MyString
+  aliasable: two
+  aliasable_type: Aliasable

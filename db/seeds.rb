@@ -1,6 +1,14 @@
 # Wipe in development to keep seeding idempotent
+# Destroy in reverse dependency order - children before parents
+Alias.destroy_all
+Tagging.destroy_all
+Tag.destroy_all
+TechniqueEndingPositionVariant.destroy_all
+TechniqueStartingPositionVariant.destroy_all
+Technique.destroy_all
 PositionVariant.destroy_all
 Position.destroy_all
+
 
 positions_data = [
   {
@@ -122,7 +130,7 @@ techniques_data = [
     gi_nogi: :both,
     description: "Fundamental escape from mount using elbow-knee connection to recover guard.",
     starting_variants: [ "Mount Bottom" ],
-    ending_variants: [ "Closed Guard Top" ]
+    ending_variants: [ "Closed Guard Bottom" ]
   },
   {
     name: "Heel Hook",
@@ -160,3 +168,52 @@ techniques_data.each do |tech_data|
 end
 
 puts "Seeded #{Technique.count} techniques."
+
+
+# Tags
+tags_data = [
+  "fundamental",
+  "competition",
+  "kids-class",
+  "no-gi-only",
+  "guard-retention",
+  "self-defense",
+  "beginner",
+  "advanced"
+]
+
+tags_data.each { |name| Tag.find_or_create_by!(name: name) }
+puts "Seeded #{Tag.count} tags."
+
+# Taggings
+{
+  "Armbar"            => [ "fundamental", "competition", "beginner" ],
+  "Triangle Choke"    => [ "fundamental", "competition" ],
+  "Guillotine"        => [ "fundamental", "self-defense", "competition" ],
+  "Scissor Sweep"     => [ "fundamental", "beginner", "kids-class" ],
+  "Hip Bump Sweep"    => [ "fundamental", "beginner" ],
+  "Elbow Escape"      => [ "fundamental", "beginner", "kids-class" ],
+  "Heel Hook"         => [ "competition", "advanced", "no-gi-only" ],
+  "Double Leg Takedown" => [ "fundamental", "competition", "self-defense", "kids-class" ]
+}.each do |technique_name, tag_names|
+  technique = Technique.find_by!(name: technique_name)
+  tag_names.each do |tag_name|
+    tag = Tag.find_by!(name: tag_name)
+    Tagging.find_or_create_by!(technique: technique, tag: tag)
+  end
+end
+puts "Seeded #{Tagging.count} taggings."
+
+# Aliases
+{
+  "Side Control"   => { type: "Position",  aliases: [ "Cross Side", "Side Mount" ] },
+  "Armbar"         => { type: "Technique", aliases: [ "Juji Gatame" ] },
+  "Heel Hook"      => { type: "Technique", aliases: [ "Inside Heel Hook", "Outside Heel Hook" ] },
+  "Ashi Garami"    => { type: "Position",  aliases: [ "Single Leg X" ] }
+}.each do |name, data|
+  record = data[:type].constantize.find_by!(name: name)
+  data[:aliases].each do |alias_name|
+    record.aliases.find_or_create_by!(name: alias_name)
+  end
+end
+puts "Seeded #{Alias.count} aliases."

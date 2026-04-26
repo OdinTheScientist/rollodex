@@ -13,6 +13,7 @@ class PositionVariant < ApplicationRecord
   has_many :available_techniques,
           through: :technique_starting_position_variants,
           source: :technique
+  has_many :aliases, as: :aliasable
 
   validates :name, presence: true,
                    uniqueness: { scope: :position_id, case_sensitive: false }

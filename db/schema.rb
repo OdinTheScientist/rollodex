@@ -10,9 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_26_191902) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_26_222649) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "aliases", force: :cascade do |t|
+    t.bigint "aliasable_id", null: false
+    t.string "aliasable_type", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["aliasable_type", "aliasable_id"], name: "index_aliases_on_aliasable"
+    t.index ["aliasable_type", "aliasable_id"], name: "index_aliases_on_aliasable_type_and_aliasable_id"
+    t.index ["name"], name: "index_aliases_on_name"
+  end
 
   create_table "position_variants", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -33,6 +44,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_26_191902) do
     t.datetime "updated_at", null: false
     t.index ["category"], name: "index_positions_on_category"
     t.index ["name"], name: "index_positions_on_name", unique: true
+  end
+
+  create_table "taggings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "tag_id", null: false
+    t.bigint "technique_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tag_id"], name: "index_taggings_on_tag_id"
+    t.index ["technique_id", "tag_id"], name: "index_taggings_on_technique_id_and_tag_id", unique: true
+    t.index ["technique_id"], name: "index_taggings_on_technique_id"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_tags_on_name", unique: true
   end
 
   create_table "technique_ending_position_variants", force: :cascade do |t|
@@ -68,6 +96,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_26_191902) do
   end
 
   add_foreign_key "position_variants", "positions"
+  add_foreign_key "taggings", "tags"
+  add_foreign_key "taggings", "techniques"
   add_foreign_key "technique_ending_position_variants", "position_variants"
   add_foreign_key "technique_ending_position_variants", "techniques"
   add_foreign_key "technique_starting_position_variants", "position_variants"

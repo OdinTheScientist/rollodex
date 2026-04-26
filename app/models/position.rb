@@ -1,5 +1,7 @@
 class Position < ApplicationRecord
   has_many :variants, class_name: "PositionVariant", dependent: :destroy
+  has_many :aliases, as: :aliasable
+
 
   enum :category, {
     guard: 0,

@@ -10,6 +10,9 @@ class Technique < ApplicationRecord
   has_many :ending_position_variants,
            through: :technique_ending_position_variants,
            source: :position_variant
+  has_many :taggings
+  has_many :tags, through: :taggings
+  has_many :aliases, as: :aliasable
 
   enum :technique_type, {
     submission: 0,
