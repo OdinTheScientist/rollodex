@@ -1,11 +1,44 @@
-<h1>Positions</h1>
+<%
+  category_dot = {
+    "guard"            => "bg-emerald-500",
+    "pin"              => "bg-rose-500",
+    "back"             => "bg-orange-500",
+    "leg_entanglement" => "bg-violet-500",
+    "neutral"          => "bg-slate-400",
+    "scramble"         => "bg-amber-500",
+    "turtle"           => "bg-teal-500"
+  }
+%>
 
-<% @positions.each do |position| %>
-  <div>
-    <h2><%= link_to position.name, position %></h2>
-    <p><%= position.category.humanize %></p>
-    <p><%= position.variants.size %> variants</p>
+<div class="w-full">
+  <div class="flex items-center justify-between mb-10">
+    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Positions</h1>
+    <%= link_to new_position_path,
+          class: "text-sm font-medium text-white bg-gray-900 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors" do %>
+      + New Position
+    <% end %>
   </div>
-<% end %>
 
-<%= link_to "Add Position", new_position_path %>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+    <% @positions.each do |position| %>
+      <% dot = category_dot.fetch(position.category, "bg-gray-400") %>
+      <%= link_to position_path(position),
+            class: "group flex flex-col bg-white border border-gray-200 rounded-xl p-5 hover:border-gray-300 hover:shadow-md transition-all duration-150" do %>
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full <%= dot %>"></span>
+            <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <%= position.category.to_s.humanize %>
+            </span>
+          </div>
+          <span class="text-xs text-gray-300">
+            <%= position.variants.size %> <%= "variant".pluralize(position.variants.size) %>
+          </span>
+        </div>
+        <h2 class="text-base font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors leading-snug">
+          <%= position.name %>
+        </h2>
+      <% end %>
+    <% end %>
+  </div>
+</div>

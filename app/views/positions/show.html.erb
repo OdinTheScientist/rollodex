@@ -1,4 +1,100 @@
-<div>
-  <h1 class="font-bold text-4xl">Positions#show</h1>
-  <p>Find me in app/views/positions/show.html.erb</p>
+<%
+  role_accent = {
+    "attacker" => "bg-rose-500",
+    "defender" => "bg-blue-500",
+    "neutral"  => "bg-gray-400",
+    "mutual"   => "bg-violet-500"
+  }
+
+  role_text = {
+    "attacker" => "text-rose-600",
+    "defender" => "text-blue-600",
+    "neutral"  => "text-gray-500",
+    "mutual"   => "text-violet-600"
+  }
+
+  technique_badge = {
+    "submission" => "bg-rose-50 text-rose-700 ring-1 ring-rose-200",
+    "sweep"      => "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
+    "pass"       => "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
+    "escape"     => "bg-sky-50 text-sky-700 ring-1 ring-sky-200",
+    "takedown"   => "bg-orange-50 text-orange-700 ring-1 ring-orange-200",
+    "transition" => "bg-purple-50 text-purple-700 ring-1 ring-purple-200",
+    "control"    => "bg-teal-50 text-teal-700 ring-1 ring-teal-200",
+    "recovery"   => "bg-pink-50 text-pink-700 ring-1 ring-pink-200"
+  }
+
+  roles   = %w[attacker defender neutral mutual]
+  grouped = @position.variants.group_by(&:role)
+%>
+
+<div class="w-full max-w-2xl">
+
+  <%# Back link %>
+  <%= link_to positions_path, class: "inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors mb-8 group" do %>
+    <svg class="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+    Positions
+  <% end %>
+
+  <%# Header %>
+  <div class="mb-10">
+    <div class="flex flex-wrap items-center gap-2 mb-3">
+      <span class="text-xs font-semibold uppercase tracking-widest text-indigo-500 bg-indigo-50 px-2.5 py-1 rounded-md">
+        <%= @position.category.to_s.humanize %>
+      </span>
+      <% @position.aliases.each do |a| %>
+        <span class="text-xs text-gray-400 bg-gray-100 px-2.5 py-1 rounded-md"><%= a.name %></span>
+      <% end %>
+    </div>
+    <h1 class="text-4xl font-bold text-gray-900 tracking-tight"><%= @position.name %></h1>
+  </div>
+
+  <%# Variants by role %>
+  <div class="space-y-10">
+    <% roles.each do |role| %>
+      <% variants = grouped[role] %>
+      <% next if variants.blank? %>
+
+      <section>
+        <%# Role heading %>
+        <div class="flex items-center gap-3 mb-5">
+          <span class="w-2 h-2 rounded-full flex-shrink-0 <%= role_accent[role] %>"></span>
+          <span class="text-xs font-bold uppercase tracking-widest <%= role_text[role] %>"><%= role.capitalize %></span>
+          <div class="flex-1 h-px bg-gray-100"></div>
+        </div>
+
+        <div class="space-y-5 pl-5">
+          <% variants.each do |variant| %>
+            <div>
+              <%# Variant name + aliases %>
+              <div class="flex flex-wrap items-baseline gap-2 mb-2.5">
+                <h3 class="font-semibold text-gray-900"><%= variant.name %></h3>
+                <% variant.aliases.each do |a| %>
+                  <span class="text-xs text-gray-400"><%= a.name %></span>
+                <% end %>
+              </div>
+
+              <%# Techniques %>
+              <% if variant.available_techniques.any? %>
+                <div class="flex flex-wrap gap-1.5">
+                  <% variant.available_techniques.each do |t| %>
+                    <% badge = technique_badge.fetch(t.technique_type, "bg-gray-100 text-gray-600 ring-1 ring-gray-200") %>
+                    <span class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full <%= badge %>">
+                      <%= t.name %>
+                      <span class="opacity-50 font-normal">&middot; <%= t.technique_type.to_s.humanize %></span>
+                    </span>
+                  <% end %>
+                </div>
+              <% else %>
+                <p class="text-xs text-gray-400 italic">No techniques recorded.</p>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+  </div>
+
 </div>
