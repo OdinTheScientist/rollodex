@@ -1,0 +1,11 @@
+<h1>Positions</h1>
+
+<% @positions.each do |position| %>
+  <div>
+    <h2><%= link_to position.name, position %></h2>
+    <p><%= position.category.humanize %></p>
+    <p><%= position.variants.size %> variants</p>
+  </div>
+<% end %>
+
+<%= link_to "Add Position", new_position_path %>
