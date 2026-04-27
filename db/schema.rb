@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_27_181355) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_27_225408) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -46,6 +46,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_181355) do
     t.index ["category"], name: "index_positions_on_category"
     t.index ["name"], name: "index_positions_on_name", unique: true
     t.index ["name"], name: "index_positions_on_name_trgm", opclass: :gin_trgm_ops, using: :gin
+  end
+
+  create_table "resource_techniques", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "resource_id", null: false
+    t.bigint "technique_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["resource_id", "technique_id"], name: "index_resource_techniques_on_resource_and_technique", unique: true
+    t.index ["resource_id"], name: "index_resource_techniques_on_resource_id"
+    t.index ["technique_id"], name: "index_resource_techniques_on_technique_id"
+  end
+
+  create_table "resources", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "instructor_name"
+    t.text "notes"
+    t.integer "resource_type", default: 0, null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.string "url"
+    t.index ["resource_type"], name: "index_resources_on_resource_type"
+    t.index ["title"], name: "index_resources_on_title_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "taggings", force: :cascade do |t|
@@ -99,6 +121,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_181355) do
   end
 
   add_foreign_key "position_variants", "positions"
+  add_foreign_key "resource_techniques", "resources"
+  add_foreign_key "resource_techniques", "techniques"
   add_foreign_key "taggings", "tags"
   add_foreign_key "taggings", "techniques"
   add_foreign_key "technique_ending_position_variants", "position_variants"

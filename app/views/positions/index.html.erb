@@ -21,14 +21,7 @@
 </div>
 
 <%# ── Search ── %>
-<%= form_with url: positions_path, method: :get, class: "mb-6",
-      data: { controller: "search" } do |f| %>
-  <%= f.text_field :q, value: params[:q],
-        placeholder: "Search positions…",
-        autocomplete: "off",
-        data: { action: "input->search#search" },
-        class: "w-full rounded-xl border border-gray-200 px-4 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400" %>
-<% end %>
+<%= render "shared/search", url: positions_path, placeholder: "Search positions…" %>
 
 <%# ── Grid ── %>
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -8,6 +8,8 @@ TechniqueStartingPositionVariant.destroy_all
 Technique.destroy_all
 PositionVariant.destroy_all
 Position.destroy_all
+ResourceTechnique.destroy_all
+Resource.destroy_all
 
 
 positions_data = [
@@ -217,3 +219,50 @@ puts "Seeded #{Tagging.count} taggings."
   end
 end
 puts "Seeded #{Alias.count} aliases."
+
+# Resources
+resources_data = [
+  {
+    title: "Roger Gracie Black Belt Armbar Tutorial",
+    url: "https://www.youtube.com/watch?v=example1",
+    resource_type: :video,
+    instructor_name: "Roger Gracie",
+    notes: "Great breakdown of the classical armbar from guard.",
+    techniques: [ "Armbar" ]
+  },
+  {
+    title: "John Danaher - Enter the System: Guard Passing",
+    url: "https://www.youtube.com/watch?v=example2",
+    resource_type: :instructional_series,
+    instructor_name: "John Danaher",
+    notes: "Comprehensive guard passing system.",
+    techniques: [ "Scissor Sweep", "Hip Bump Sweep" ]
+  },
+  {
+    title: "Gordon Ryan Match - ADCC 2019",
+    url: "https://www.youtube.com/watch?v=example3",
+    resource_type: :match_footage,
+    instructor_name: "Gordon Ryan",
+    notes: "Great examples of heel hooks and leg entanglements.",
+    techniques: [ "Heel Hook" ]
+  },
+  {
+    title: "Fundamentals of the Triangle Choke",
+    url: "https://www.youtube.com/watch?v=example4",
+    resource_type: :video,
+    instructor_name: "Marcelo Garcia",
+    notes: "Setup and finish details for the triangle.",
+    techniques: [ "Triangle Choke", "Armbar" ]
+  }
+]
+
+resources_data.each do |res_data|
+  technique_names = res_data.delete(:techniques)
+  resource = Resource.create!(res_data)
+  technique_names.each do |name|
+    technique = Technique.find_by!(name: name)
+    ResourceTechnique.create!(resource: resource, technique: technique)
+  end
+end
+
+puts "Seeded #{Resource.count} resources and #{ResourceTechnique.count} resource techniques."

@@ -13,6 +13,8 @@ class Technique < ApplicationRecord
   has_many :taggings
   has_many :tags, through: :taggings
   has_many :aliases, as: :aliasable
+  has_many :resource_techniques
+  has_many :resources, through: :resource_techniques
 
   enum :technique_type, {
     submission: 0,

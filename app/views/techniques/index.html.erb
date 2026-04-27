@@ -1,4 +1,63 @@
-<div>
-  <h1 class="font-bold text-4xl">Techniques#index</h1>
-  <p>Find me in app/views/techniques/index.html.erb</p>
+<%
+  type_colors = {
+    "submission"  => "bg-rose-100 text-rose-700",
+    "sweep"       => "bg-blue-100 text-blue-700",
+    "pass"        => "bg-indigo-100 text-indigo-700",
+    "escape"      => "bg-amber-100 text-amber-700",
+    "takedown"    => "bg-orange-100 text-orange-700",
+    "transition"  => "bg-teal-100 text-teal-700",
+    "control"     => "bg-emerald-100 text-emerald-700",
+    "recovery"    => "bg-slate-100 text-slate-600"
+  }
+
+  gi_nogi_labels = {
+    "both"      => "Gi & No-Gi",
+    "gi_only"   => "Gi",
+    "nogi_only" => "No-Gi"
+  }
+%>
+
+<%# ── Page header ── %>
+<div class="flex items-end justify-between mb-8">
+  <div>
+    <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Library</p>
+    <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">Techniques</h1>
+  </div>
+  <%= link_to "Add Technique", new_technique_path,
+        class: "inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold shadow hover:bg-slate-700 transition-colors duration-150" %>
+</div>
+
+<%# ── Search ── %>
+<%= render "shared/search", url: techniques_path, placeholder: "Search techniques…" %>
+
+<%# ── Grid ── %>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  <% @techniques.each do |technique| %>
+    <% color = type_colors.fetch(technique.technique_type.to_s, "bg-gray-100 text-gray-600") %>
+    <%= link_to technique_path(technique), class: "group block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 overflow-hidden" do %>
+      <div class="h-1.5 w-full <%= color.split.first %>"></div>
+      <div class="px-5 py-5">
+        <div class="flex items-start justify-between gap-3 mb-3">
+          <h2 class="font-bold text-gray-900 text-lg leading-snug group-hover:text-slate-700 transition-colors">
+            <%= technique.name %>
+          </h2>
+          <span class="shrink-0 px-2.5 py-0.5 rounded-full text-xs font-semibold <%= color %>">
+            <%= technique.technique_type.to_s.humanize %>
+          </span>
+        </div>
+        <div class="flex items-center justify-between">
+          <p class="text-sm text-gray-400">
+            <%= gi_nogi_labels.fetch(technique.gi_nogi.to_s, technique.gi_nogi.to_s.humanize) %>
+          </p>
+          <% if technique.tags.any? %>
+            <div class="flex gap-1 flex-wrap justify-end">
+              <% technique.tags.first(3).each do |tag| %>
+                <span class="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500"><%= tag.name %></span>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
 </div>
