@@ -1,4 +1,143 @@
-<div>
-  <h1 class="font-bold text-4xl">Techniques#show</h1>
-  <p>Find me in app/views/techniques/show.html.erb</p>
+<%
+  type_badge = {
+    "submission"  => "bg-rose-50 text-rose-700 ring-1 ring-rose-200",
+    "sweep"       => "bg-blue-50 text-blue-700 ring-1 ring-blue-200",
+    "pass"        => "bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200",
+    "escape"      => "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
+    "takedown"    => "bg-orange-50 text-orange-700 ring-1 ring-orange-200",
+    "transition"  => "bg-teal-50 text-teal-700 ring-1 ring-teal-200",
+    "control"     => "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
+    "recovery"    => "bg-slate-50 text-slate-600 ring-1 ring-slate-200"
+  }
+
+  resource_type_badge = {
+    "video"               => "bg-rose-50 text-rose-600",
+    "instructional_series"=> "bg-violet-50 text-violet-600",
+    "article"             => "bg-sky-50 text-sky-600",
+    "match_footage"       => "bg-amber-50 text-amber-600",
+    "personal_note"       => "bg-emerald-50 text-emerald-600"
+  }
+%>
+
+<div class="w-full max-w-2xl">
+
+  <%# ── Back link ── %>
+  <%= link_to techniques_path, class: "inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors mb-8 group" do %>
+    <svg class="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+    Techniques
+  <% end %>
+
+  <%# ── Header ── %>
+  <div class="mb-10">
+    <div class="flex flex-wrap items-center gap-2 mb-3">
+      <% badge = type_badge.fetch(@technique.technique_type.to_s, "bg-gray-100 text-gray-600 ring-1 ring-gray-200") %>
+      <span class="text-xs font-semibold uppercase tracking-widest px-2.5 py-1 rounded-md <%= badge %>">
+        <%= @technique.technique_type.to_s.humanize %>
+      </span>
+      <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2.5 py-1 rounded-md">
+        <%= @technique.gi_nogi.to_s.humanize %>
+      </span>
+      <% @technique.aliases.each do |a| %>
+        <span class="text-xs text-gray-400 bg-gray-100 px-2.5 py-1 rounded-md"><%= a.name %></span>
+      <% end %>
+    </div>
+    <h1 class="text-4xl font-bold text-gray-900 tracking-tight"><%= @technique.name %></h1>
+  </div>
+
+  <div class="space-y-10">
+
+    <%# ── Description ── %>
+    <% if @technique.description.present? %>
+      <section>
+        <p class="text-gray-600 leading-relaxed"><%= @technique.description %></p>
+      </section>
+    <% end %>
+
+    <%# ── Flow ── %>
+    <% if @technique.starting_position_variants.any? || @technique.ending_position_variants.any? %>
+      <section>
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Flow</span>
+          <div class="flex-1 h-px bg-gray-100"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Starts from</p>
+            <div class="space-y-2">
+              <% @technique.starting_position_variants.each do |spv| %>
+                <div class="flex items-baseline gap-1.5">
+                  <span class="font-medium text-gray-800 text-sm"><%= spv.position.name %></span>
+                  <span class="text-gray-300">·</span>
+                  <span class="text-sm text-gray-500"><%= spv.name %></span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">Lands in</p>
+            <div class="space-y-2">
+              <% @technique.ending_position_variants.each do |epv| %>
+                <div class="flex items-baseline gap-1.5">
+                  <span class="font-medium text-gray-800 text-sm"><%= epv.position.name %></span>
+                  <span class="text-gray-300">·</span>
+                  <span class="text-sm text-gray-500"><%= epv.name %></span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </section>
+    <% end %>
+
+    <%# ── Tags ── %>
+    <% if @technique.tags.any? %>
+      <section>
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Tags</span>
+          <div class="flex-1 h-px bg-gray-100"></div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <% @technique.tags.each do |tag| %>
+            <span class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 ring-1 ring-gray-200">
+              <%= tag.name %>
+            </span>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+    <%# ── Resources ── %>
+    <% if @technique.resources.any? %>
+      <section>
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Resources</span>
+          <div class="flex-1 h-px bg-gray-100"></div>
+        </div>
+        <div class="space-y-3">
+          <% @technique.resources.each do |resource| %>
+            <% rb = resource_type_badge.fetch(resource.resource_type.to_s, "bg-gray-100 text-gray-500") %>
+            <%= link_to resource.url, target: "_blank", rel: "noopener noreferrer",
+                  class: "flex items-center justify-between gap-4 p-3 rounded-xl border border-gray-100 hover:border-gray-300 hover:shadow-sm transition-all group" do %>
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="shrink-0 text-xs font-semibold px-2 py-0.5 rounded <%= rb %>">
+                  <%= resource.resource_type.to_s.humanize %>
+                </span>
+                <span class="text-sm font-medium text-gray-800 truncate group-hover:text-slate-700">
+                  <%= resource.title %>
+                </span>
+              </div>
+              <svg class="shrink-0 w-3.5 h-3.5 text-gray-300 group-hover:text-gray-500 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            <% end %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+  </div>
 </div>

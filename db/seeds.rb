@@ -248,7 +248,7 @@ resources_data = [
   },
   {
     title: "Fundamentals of the Triangle Choke",
-    url: "https://www.youtube.com/watch?v=example4",
+    url: "https://www.youtube.com/watch?v=WsOvsDR_104",
     resource_type: :video,
     instructor_name: "Marcelo Garcia",
     notes: "Setup and finish details for the triangle.",
