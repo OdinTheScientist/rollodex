@@ -1,44 +1,54 @@
 <%
-  category_dot = {
-    "guard"            => "bg-emerald-500",
-    "pin"              => "bg-rose-500",
-    "back"             => "bg-orange-500",
-    "leg_entanglement" => "bg-violet-500",
-    "neutral"          => "bg-slate-400",
-    "scramble"         => "bg-amber-500",
-    "turtle"           => "bg-teal-500"
+  category_colors = {
+    "guard"            => "bg-emerald-100 text-emerald-700",
+    "pin"              => "bg-rose-100 text-rose-700",
+    "back"             => "bg-orange-100 text-orange-700",
+    "leg_entanglement" => "bg-purple-100 text-purple-700",
+    "neutral"          => "bg-slate-100 text-slate-600",
+    "scramble"         => "bg-amber-100 text-amber-700",
+    "turtle"           => "bg-teal-100 text-teal-700"
   }
 %>
 
-<div class="w-full">
-  <div class="flex items-center justify-between mb-10">
-    <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Positions</h1>
-    <%= link_to new_position_path,
-          class: "text-sm font-medium text-white bg-gray-900 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors" do %>
-      + New Position
-    <% end %>
+<%# ── Page header ── %>
+<div class="flex items-end justify-between mb-8">
+  <div>
+    <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Library</p>
+    <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">Positions</h1>
   </div>
+  <%= link_to "Add Position", new_position_path,
+        class: "inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold shadow hover:bg-slate-700 transition-colors duration-150" %>
+</div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-    <% @positions.each do |position| %>
-      <% dot = category_dot.fetch(position.category, "bg-gray-400") %>
-      <%= link_to position_path(position),
-            class: "group flex flex-col bg-white border border-gray-200 rounded-xl p-5 hover:border-gray-300 hover:shadow-md transition-all duration-150" do %>
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full <%= dot %>"></span>
-            <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">
-              <%= position.category.to_s.humanize %>
-            </span>
-          </div>
-          <span class="text-xs text-gray-300">
-            <%= position.variants.size %> <%= "variant".pluralize(position.variants.size) %>
+<%# ── Search ── %>
+<%= form_with url: positions_path, method: :get, class: "mb-6",
+      data: { controller: "search" } do |f| %>
+  <%= f.text_field :q, value: params[:q],
+        placeholder: "Search positions…",
+        autocomplete: "off",
+        data: { action: "input->search#search" },
+        class: "w-full rounded-xl border border-gray-200 px-4 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400" %>
+<% end %>
+
+<%# ── Grid ── %>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  <% @positions.each do |position| %>
+    <% color = category_colors.fetch(position.category, "bg-gray-100 text-gray-600") %>
+    <%= link_to position_path(position), class: "group block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 overflow-hidden" do %>
+      <div class="h-1.5 w-full <%= color.split.first %>"></div>
+      <div class="px-5 py-5">
+        <div class="flex items-start justify-between gap-3 mb-3">
+          <h2 class="font-bold text-gray-900 text-lg leading-snug group-hover:text-slate-700 transition-colors">
+            <%= position.name %>
+          </h2>
+          <span class="shrink-0 px-2.5 py-0.5 rounded-full text-xs font-semibold <%= color %>">
+            <%= position.category.to_s.humanize %>
           </span>
         </div>
-        <h2 class="text-base font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors leading-snug">
-          <%= position.name %>
-        </h2>
-      <% end %>
+        <p class="text-sm text-gray-400">
+          <%= position.variants.size %> <%= "variant".pluralize(position.variants.size) %>
+        </p>
+      </div>
     <% end %>
-  </div>
+  <% end %>
 </div>

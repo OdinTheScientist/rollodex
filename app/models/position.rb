@@ -15,4 +15,13 @@ class Position < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { case_sensitive: false }
   validates :category, presence: true
+
+  scope :search, ->(query) {
+    if query.length >= 5
+      where("word_similarity(:query, name) > 0.35 OR name ILIKE :pattern",
+            query: query, pattern: "%#{query}%")
+    else
+      where("name ILIKE :pattern", pattern: "%#{query}%")
+    end
+  }
 end

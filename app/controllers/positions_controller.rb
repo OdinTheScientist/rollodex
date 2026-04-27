@@ -2,7 +2,9 @@ class PositionsController < ApplicationController
   before_action :set_position, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    @positions = Position.includes(:variants).all
+    scope = Position.includes(:variants).all
+    scope = scope.search(params[:q]) if params[:q].present?
+    @positions = scope
   end
 
   def show

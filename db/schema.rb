@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_26_222649) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_27_181355) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
 
   create_table "aliases", force: :cascade do |t|
     t.bigint "aliasable_id", null: false
@@ -44,6 +45,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_26_222649) do
     t.datetime "updated_at", null: false
     t.index ["category"], name: "index_positions_on_category"
     t.index ["name"], name: "index_positions_on_name", unique: true
+    t.index ["name"], name: "index_positions_on_name_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "taggings", force: :cascade do |t|
@@ -92,6 +94,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_26_222649) do
     t.datetime "updated_at", null: false
     t.index ["gi_nogi"], name: "index_techniques_on_gi_nogi"
     t.index ["name"], name: "index_techniques_on_name", unique: true
+    t.index ["name"], name: "index_techniques_on_name_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["technique_type"], name: "index_techniques_on_technique_type"
   end
 
