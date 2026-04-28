@@ -1,5 +1,26 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+# == Schema Information
+#
+# Table name: technique_starting_position_variants
+#
+#  id                  :bigint           not null, primary key
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  position_variant_id :bigint           not null
+#  technique_id        :bigint           not null
+#
+# Indexes
+#
+#  idx_on_position_variant_id_58074126e9                       (position_variant_id)
+#  index_starting_variants_on_technique_and_position_variant   (technique_id,position_variant_id) UNIQUE
+#  index_technique_starting_position_variants_on_technique_id  (technique_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (position_variant_id => position_variants.id)
+#  fk_rails_...  (technique_id => techniques.id)
+#
 one:
   technique: one
   position_variant: one
