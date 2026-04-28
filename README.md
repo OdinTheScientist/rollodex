@@ -11,6 +11,7 @@ Rollodex is a personal knowledge base for Brazilian Jiu-Jitsu practitioners and 
 Built by a BJJ coach who also teaches a kids class, the app reflects real domain knowledge — the data model distinguishes between attacker and defender roles within positions, handles leg entanglements where top/bottom orientation breaks down, and supports aliases so "cross side" and "side mount" both find Side Control.
 
 ---
+![alt text](image.png)
 
 ## Why it exists
 
