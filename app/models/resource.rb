@@ -3,6 +3,7 @@
 # Table name: resources
 #
 #  id              :bigint           not null, primary key
+#  foundational    :boolean          default(FALSE), not null
 #  instructor_name :string
 #  notes           :text
 #  resource_type   :integer          default("video"), not null
@@ -17,7 +18,10 @@
 #  index_resources_on_title_trgm     (title) USING gin
 #
 class Resource < ApplicationRecord
+  has_many :resource_techniques
   has_many :techniques, through: :resource_techniques
+  has_many :resource_positions
+  has_many :positions, through: :resource_positions
 
     enum :resource_type, {
     video: 0,

@@ -18,6 +18,8 @@
 class Position < ApplicationRecord
   has_many :variants, class_name: "PositionVariant", dependent: :destroy
   has_many :aliases, as: :aliasable
+  has_many :resource_positions
+  has_many :resources, through: :resource_positions
 
 
   enum :category, {

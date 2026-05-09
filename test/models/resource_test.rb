@@ -3,6 +3,7 @@
 # Table name: resources
 #
 #  id              :bigint           not null, primary key
+#  foundational    :boolean          default(FALSE), not null
 #  instructor_name :string
 #  notes           :text
 #  resource_type   :integer          default("video"), not null

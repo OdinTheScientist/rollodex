@@ -81,10 +81,10 @@
                 <div class="flex flex-wrap gap-1.5">
                   <% variant.available_techniques.each do |t| %>
                     <% badge = technique_badge.fetch(t.technique_type, "bg-gray-100 text-gray-600 ring-1 ring-gray-200") %>
-                    <span class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full <%= badge %>">
+                    <%= link_to technique_path(t), class: "inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full hover:opacity-75 transition-opacity #{badge}" do %>
                       <%= t.name %>
                       <span class="opacity-50 font-normal">&middot; <%= t.technique_type.to_s.humanize %></span>
-                    </span>
+                    <% end %>
                   <% end %>
                 </div>
               <% else %>

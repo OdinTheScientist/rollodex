@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_27_225408) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_09_030721) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -48,6 +48,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_225408) do
     t.index ["name"], name: "index_positions_on_name_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
+  create_table "resource_positions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "position_id", null: false
+    t.bigint "resource_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["position_id"], name: "index_resource_positions_on_position_id"
+    t.index ["resource_id", "position_id"], name: "index_resource_positions_on_resource_and_position", unique: true
+    t.index ["resource_id"], name: "index_resource_positions_on_resource_id"
+  end
+
   create_table "resource_techniques", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "resource_id", null: false
@@ -60,6 +70,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_225408) do
 
   create_table "resources", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.boolean "foundational", default: false, null: false
     t.string "instructor_name"
     t.text "notes"
     t.integer "resource_type", default: 0, null: false
@@ -121,6 +132,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_27_225408) do
   end
 
   add_foreign_key "position_variants", "positions"
+  add_foreign_key "resource_positions", "positions"
+  add_foreign_key "resource_positions", "resources"
   add_foreign_key "resource_techniques", "resources"
   add_foreign_key "resource_techniques", "techniques"
   add_foreign_key "taggings", "tags"

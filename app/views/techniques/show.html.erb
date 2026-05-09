@@ -69,7 +69,8 @@
             <div class="space-y-2">
               <% @technique.starting_position_variants.each do |spv| %>
                 <div class="flex items-baseline gap-1.5">
-                  <span class="font-medium text-gray-800 text-sm"><%= spv.position.name %></span>
+                  <%= link_to spv.position.name, position_path(spv.position),
+                        class: "font-medium text-gray-800 text-sm hover:text-slate-600 hover:underline underline-offset-2 transition-colors" %>
                   <span class="text-gray-300">·</span>
                   <span class="text-sm text-gray-500"><%= spv.name %></span>
                 </div>
@@ -82,7 +83,8 @@
             <div class="space-y-2">
               <% @technique.ending_position_variants.each do |epv| %>
                 <div class="flex items-baseline gap-1.5">
-                  <span class="font-medium text-gray-800 text-sm"><%= epv.position.name %></span>
+                  <%= link_to epv.position.name, position_path(epv.position),
+                        class: "font-medium text-gray-800 text-sm hover:text-slate-600 hover:underline underline-offset-2 transition-colors" %>
                   <span class="text-gray-300">·</span>
                   <span class="text-sm text-gray-500"><%= epv.name %></span>
                 </div>
