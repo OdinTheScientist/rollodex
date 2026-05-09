@@ -33,4 +33,9 @@ class Resource < ApplicationRecord
 
   validates :title, presence: true, uniqueness: { case_sensitive: false }
   validates :resource_type, presence: true
+
+  def youtube_id
+    return nil unless url.present?
+    url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)&.[](1)
+  end
 end

@@ -113,16 +113,16 @@
     <% end %>
 
     <%# ── Resources ── %>
-    <% if @technique.resources.any? %>
-      <section>
-        <div class="flex items-center gap-3 mb-5">
-          <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Resources</span>
-          <div class="flex-1 h-px bg-gray-100"></div>
-        </div>
-        <div class="space-y-3">
+    <section>
+      <div class="flex items-center gap-3 mb-5">
+        <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Resources</span>
+        <div class="flex-1 h-px bg-gray-100"></div>
+      </div>
+      <% if @technique.resources.any? %>
+        <div class="space-y-3 mb-4">
           <% @technique.resources.each do |resource| %>
             <% rb = resource_type_badge.fetch(resource.resource_type.to_s, "bg-gray-100 text-gray-500") %>
-            <%= link_to resource.url, target: "_blank", rel: "noopener noreferrer",
+            <%= link_to resource_path(resource),
                   class: "flex items-center justify-between gap-4 p-3 rounded-xl border border-gray-100 hover:border-gray-300 hover:shadow-sm transition-all group" do %>
               <div class="flex items-center gap-3 min-w-0">
                 <span class="shrink-0 text-xs font-semibold px-2 py-0.5 rounded <%= rb %>">
@@ -138,8 +138,10 @@
             <% end %>
           <% end %>
         </div>
-      </section>
-    <% end %>
+      <% end %>
+      <%= link_to "Add Resource", new_resource_path(technique_id: @technique.id),
+            class: "inline-flex items-center gap-1 text-sm text-slate-400 hover:text-slate-700 transition-colors" %>
+    </section>
 
   </div>
 </div>

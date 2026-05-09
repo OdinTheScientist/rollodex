@@ -1,4 +1,12 @@
-<div>
-  <h1 class="font-bold text-4xl">Resources#new</h1>
-  <p>Find me in app/views/resources/new.html.erb</p>
+<div class="w-full max-w-2xl">
+  <%= link_to resources_path, class: "inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors mb-8 group" do %>
+    <svg class="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+    Resources
+  <% end %>
+
+  <h1 class="text-3xl font-bold text-gray-900 tracking-tight mb-8">New Resource</h1>
+
+  <%= render "form" %>
 </div>

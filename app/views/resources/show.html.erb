@@ -1,4 +1,136 @@
-<div>
-  <h1 class="font-bold text-4xl">Resources#show</h1>
-  <p>Find me in app/views/resources/show.html.erb</p>
+<%
+  resource_type_badge = {
+    "video"                => "bg-rose-50 text-rose-600 ring-1 ring-rose-200",
+    "instructional_series" => "bg-violet-50 text-violet-600 ring-1 ring-violet-200",
+    "article"              => "bg-sky-50 text-sky-600 ring-1 ring-sky-200",
+    "match_footage"        => "bg-amber-50 text-amber-600 ring-1 ring-amber-200",
+    "personal_note"        => "bg-emerald-50 text-emerald-600 ring-1 ring-emerald-200"
+  }
+
+  technique_badge = {
+    "submission"  => "bg-rose-50 text-rose-700 ring-1 ring-rose-200",
+    "sweep"       => "bg-blue-50 text-blue-700 ring-1 ring-blue-200",
+    "pass"        => "bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200",
+    "escape"      => "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
+    "takedown"    => "bg-orange-50 text-orange-700 ring-1 ring-orange-200",
+    "transition"  => "bg-teal-50 text-teal-700 ring-1 ring-teal-200",
+    "control"     => "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
+    "recovery"    => "bg-slate-50 text-slate-600 ring-1 ring-slate-200"
+  }
+%>
+
+<div class="w-full max-w-2xl">
+
+  <%# ── Back link ── %>
+  <%= link_to resources_path, class: "inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-700 transition-colors mb-8 group" do %>
+    <svg class="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+    Resources
+  <% end %>
+
+  <%# ── Header ── %>
+  <div class="mb-10">
+    <div class="flex flex-wrap items-center gap-2 mb-3">
+      <% badge = resource_type_badge.fetch(@resource.resource_type.to_s, "bg-gray-100 text-gray-600 ring-1 ring-gray-200") %>
+      <span class="text-xs font-semibold uppercase tracking-widest px-2.5 py-1 rounded-md <%= badge %>">
+        <%= @resource.resource_type.to_s.humanize %>
+      </span>
+      <% if @resource.foundational? %>
+        <span class="text-xs font-semibold uppercase tracking-widest px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-600 ring-1 ring-indigo-200">
+          Foundational
+        </span>
+      <% end %>
+    </div>
+    <h1 class="text-4xl font-bold text-gray-900 tracking-tight"><%= @resource.title %></h1>
+    <% if @resource.instructor_name.present? %>
+      <p class="text-gray-500 mt-2 text-base"><%= @resource.instructor_name %></p>
+    <% end %>
+  </div>
+
+  <div class="space-y-10">
+
+    <%# ── YouTube embed ── %>
+    <% if @resource.video? && @resource.youtube_id.present? %>
+      <section>
+        <div class="aspect-video rounded-2xl overflow-hidden bg-gray-100 shadow-sm">
+          <iframe src="https://www.youtube.com/embed/<%= @resource.youtube_id %>"
+                  class="w-full h-full"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+        </div>
+      </section>
+    <% end %>
+
+    <%# ── External link (non-video resources with a URL) ── %>
+    <% if @resource.url.present? && !@resource.video? %>
+      <section>
+        <%= link_to @resource.url, target: "_blank", rel: "noopener noreferrer",
+              class: "inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:border-gray-400 hover:shadow-sm transition-all" do %>
+          View resource
+          <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+        <% end %>
+      </section>
+    <% end %>
+
+    <%# ── Notes ── %>
+    <% if @resource.notes.present? %>
+      <section>
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Notes</span>
+          <div class="flex-1 h-px bg-gray-100"></div>
+        </div>
+        <p class="text-gray-600 leading-relaxed whitespace-pre-line"><%= @resource.notes %></p>
+      </section>
+    <% end %>
+
+    <%# ── Techniques ── %>
+    <% if @resource.techniques.any? %>
+      <section>
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Techniques</span>
+          <div class="flex-1 h-px bg-gray-100"></div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <% @resource.techniques.each do |technique| %>
+            <% tb = technique_badge.fetch(technique.technique_type.to_s, "bg-gray-100 text-gray-600 ring-1 ring-gray-200") %>
+            <%= link_to technique_path(technique),
+                  class: "inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full hover:opacity-75 transition-opacity #{tb}" do %>
+              <%= technique.name %>
+              <span class="opacity-50 font-normal">&middot; <%= technique.technique_type.to_s.humanize %></span>
+            <% end %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+    <%# ── Positions ── %>
+    <% if @resource.positions.any? %>
+      <section>
+        <div class="flex items-center gap-3 mb-5">
+          <span class="text-xs font-bold uppercase tracking-widest text-gray-400">Positions</span>
+          <div class="flex-1 h-px bg-gray-100"></div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <% @resource.positions.each do |position| %>
+            <%= link_to position.name, position_path(position),
+                  class: "inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors" %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+    <%# ── Actions ── %>
+    <div class="flex items-center gap-4 pt-2 border-t border-gray-100">
+      <%= link_to "Edit", edit_resource_path(@resource),
+            class: "text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors" %>
+      <%= button_to "Delete", resource_path(@resource), method: :delete,
+            data: { turbo_confirm: "Delete "#{@resource.title}"? This cannot be undone." },
+            class: "text-sm font-medium text-rose-400 hover:text-rose-600 transition-colors bg-transparent border-none cursor-pointer p-0" %>
+    </div>
+
+  </div>
 </div>

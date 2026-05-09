@@ -1,4 +1,61 @@
-<div>
-  <h1 class="font-bold text-4xl">Resources#index</h1>
-  <p>Find me in app/views/resources/index.html.erb</p>
+<%
+  type_colors = {
+    "video"                => "bg-rose-100 text-rose-700",
+    "instructional_series" => "bg-violet-100 text-violet-700",
+    "article"              => "bg-sky-100 text-sky-700",
+    "match_footage"        => "bg-amber-100 text-amber-700",
+    "personal_note"        => "bg-emerald-100 text-emerald-700"
+  }
+%>
+
+<%# ── Page header ── %>
+<div class="flex items-end justify-between mb-8">
+  <div>
+    <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Library</p>
+    <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">Resources</h1>
+  </div>
+  <%= link_to "Add Resource", new_resource_path,
+        class: "inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold shadow hover:bg-slate-700 transition-colors duration-150" %>
+</div>
+
+<%# ── Search ── %>
+<%= render "shared/search", url: resources_path, placeholder: "Search resources…" %>
+
+<%# ── Grid ── %>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  <% @resources.each do |resource| %>
+    <% color = type_colors.fetch(resource.resource_type.to_s, "bg-gray-100 text-gray-600") %>
+    <%= link_to resource_path(resource), class: "group block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 overflow-hidden" do %>
+      <div class="h-1.5 w-full <%= color.split.first %>"></div>
+      <div class="px-5 py-5">
+        <div class="flex items-start justify-between gap-3 mb-2">
+          <h2 class="font-bold text-gray-900 text-lg leading-snug group-hover:text-slate-700 transition-colors">
+            <%= resource.title %>
+          </h2>
+          <span class="shrink-0 px-2.5 py-0.5 rounded-full text-xs font-semibold <%= color %>">
+            <%= resource.resource_type.to_s.humanize %>
+          </span>
+        </div>
+
+        <% if resource.instructor_name.present? %>
+          <p class="text-sm text-gray-500 mb-2"><%= resource.instructor_name %></p>
+        <% end %>
+
+        <% if resource.foundational? %>
+          <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-600 ring-1 ring-indigo-200 mb-2">Foundational</span>
+        <% end %>
+
+        <% if resource.techniques.any? %>
+          <div class="flex flex-wrap gap-1 mt-2">
+            <% resource.techniques.first(3).each do |t| %>
+              <span class="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500"><%= t.name %></span>
+            <% end %>
+            <% if resource.techniques.size > 3 %>
+              <span class="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-400">+<%= resource.techniques.size - 3 %> more</span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
 </div>
