@@ -1,5 +1,7 @@
-<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<% content_for :head do %>
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<% end %>
 
 <%= form_with model: @resource, class: "space-y-6" do |f| %>
   <% if @resource.errors.any? %>
@@ -79,23 +81,13 @@
 <% end %>
 
 <script>
-  (function () {
-    function initTomSelects() {
-      var techEl = document.getElementById("resource_technique_ids");
-      var posEl  = document.getElementById("resource_position_ids");
-      if (techEl && !techEl.tomselect) new TomSelect("#resource_technique_ids", { plugins: ["remove_button"] });
-      if (posEl  && !posEl.tomselect)  new TomSelect("#resource_position_ids",  { plugins: ["remove_button"] });
-    }
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initTomSelects);
-    } else {
-      initTomSelects();
-    }
-    document.addEventListener("turbo:load", function () {
-      var techEl = document.getElementById("resource_technique_ids");
-      var posEl  = document.getElementById("resource_position_ids");
-      if (techEl && !techEl.tomselect) new TomSelect("#resource_technique_ids", { plugins: ["remove_button"] });
-      if (posEl  && !posEl.tomselect)  new TomSelect("#resource_position_ids",  { plugins: ["remove_button"] });
-    });
-  })();
+  function initResourceTomSelects() {
+    if (typeof TomSelect === "undefined") return;
+    var techEl = document.getElementById("resource_technique_ids");
+    var posEl  = document.getElementById("resource_position_ids");
+    if (techEl && !techEl.tomselect) new TomSelect(techEl, { plugins: ["remove_button"] });
+    if (posEl  && !posEl.tomselect)  new TomSelect(posEl,  { plugins: ["remove_button"] });
+  }
+  document.addEventListener("turbo:load", initResourceTomSelects);
+  initResourceTomSelects();
 </script>
