@@ -42,7 +42,11 @@ class PositionsController < ApplicationController
   private
 
   def set_position
-    @position = Position.includes(:aliases, variants: [ :aliases, :available_techniques ]).find(params[:id])
+    @position = Position.includes(
+      :aliases,
+      :resources,
+      variants: [ :aliases, :available_techniques ]
+    ).find(params[:id])
   end
 
   def position_params
