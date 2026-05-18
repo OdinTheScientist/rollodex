@@ -38,6 +38,14 @@
   </div>
 
   <div>
+    <%= f.label :gi_nogi, "Gi / No-Gi", class: "block text-sm font-medium text-gray-700 mb-1.5" %>
+    <%= f.select :gi_nogi,
+          Resource.gi_nogis.keys.map { |t| [ t.humanize, t ] },
+          {},
+          class: "w-full rounded-xl border border-gray-200 px-4 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400 bg-white" %>
+  </div>
+
+  <div>
     <%= f.label :instructor_name, class: "block text-sm font-medium text-gray-700 mb-1.5" %>
     <%= f.text_field :instructor_name,
           class: "w-full rounded-xl border border-gray-200 px-4 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400" %>

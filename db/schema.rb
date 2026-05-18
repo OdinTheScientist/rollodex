@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_09_030721) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_18_140718) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -71,12 +71,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_09_030721) do
   create_table "resources", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.boolean "foundational", default: false, null: false
+    t.integer "gi_nogi", default: 0, null: false
     t.string "instructor_name"
     t.text "notes"
     t.integer "resource_type", default: 0, null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.string "url"
+    t.index ["gi_nogi"], name: "index_resources_on_gi_nogi"
     t.index ["resource_type"], name: "index_resources_on_resource_type"
     t.index ["title"], name: "index_resources_on_title_trgm", opclass: :gin_trgm_ops, using: :gin
   end

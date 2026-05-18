@@ -45,7 +45,7 @@ class TechniquesController < ApplicationController
     @technique = Technique.includes(
       :aliases,
       :tags,
-      :resources,
+      { resources: [ :techniques, :positions ] },
       starting_position_variants: :position,
       ending_position_variants: :position
     ).find(params[:id])

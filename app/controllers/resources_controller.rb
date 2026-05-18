@@ -62,7 +62,7 @@ class ResourcesController < ApplicationController
   end
 
   def resource_params
-    params.require(:resource).permit(:title, :url, :resource_type, :instructor_name, :notes, :foundational)
+    params.require(:resource).permit(:title, :url, :resource_type, :gi_nogi, :instructor_name, :notes, :foundational)
   end
 
   def technique_ids_from_params

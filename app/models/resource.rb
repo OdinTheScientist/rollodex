@@ -4,6 +4,7 @@
 #
 #  id              :bigint           not null, primary key
 #  foundational    :boolean          default(FALSE), not null
+#  gi_nogi         :integer          default("both"), not null
 #  instructor_name :string
 #  notes           :text
 #  resource_type   :integer          default("video"), not null
@@ -14,6 +15,7 @@
 #
 # Indexes
 #
+#  index_resources_on_gi_nogi        (gi_nogi)
 #  index_resources_on_resource_type  (resource_type)
 #  index_resources_on_title_trgm     (title) USING gin
 #
@@ -30,6 +32,8 @@ class Resource < ApplicationRecord
     match_footage: 3,
     personal_note: 4
   }
+
+  enum :gi_nogi, { both: 0, gi_only: 1, nogi_only: 2 }
 
   validates :title, presence: true, uniqueness: { case_sensitive: false }
   validates :resource_type, presence: true

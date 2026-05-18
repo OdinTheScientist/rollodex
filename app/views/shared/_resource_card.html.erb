@@ -1,0 +1,181 @@
+<%
+  style ||= :cinematic
+
+  resource_type_badge = {
+    "video"                => "bg-rose-50 text-rose-700 ring-1 ring-rose-200",
+    "instructional_series" => "bg-violet-50 text-violet-700 ring-1 ring-violet-200",
+    "article"              => "bg-sky-50 text-sky-700 ring-1 ring-sky-200",
+    "match_footage"        => "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
+    "personal_note"        => "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
+  }
+
+  technique_badge = {
+    "submission"  => "bg-rose-50 text-rose-700 ring-1 ring-rose-200",
+    "sweep"       => "bg-blue-50 text-blue-700 ring-1 ring-blue-200",
+    "pass"        => "bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200",
+    "escape"      => "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
+    "takedown"    => "bg-orange-50 text-orange-700 ring-1 ring-orange-200",
+    "transition"  => "bg-teal-50 text-teal-700 ring-1 ring-teal-200",
+    "control"     => "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
+    "recovery"    => "bg-slate-50 text-slate-600 ring-1 ring-slate-200"
+  }
+
+  panel_bg = {
+    "article"              => "bg-gradient-to-br from-sky-50 to-sky-100",
+    "personal_note"        => "bg-gradient-to-br from-emerald-50 to-emerald-100",
+    "instructional_series" => "bg-gradient-to-br from-violet-50 to-violet-100"
+  }
+  panel_glyph_color = {
+    "article"              => "text-sky-300",
+    "personal_note"        => "text-emerald-300",
+    "instructional_series" => "text-violet-300"
+  }
+  panel_glyph = {
+    "video"                => "▶",
+    "instructional_series" => "❑❑",
+    "article"              => "¶",
+    "match_footage"        => "◐",
+    "personal_note"        => "✎"
+  }
+
+  rtype = resource.resource_type.to_s
+  rt_label = rtype.humanize
+  rt_class = resource_type_badge.fetch(rtype, "bg-gray-100 text-gray-600 ring-1 ring-gray-200")
+
+  yt_id = resource.respond_to?(:youtube_id) ? resource.youtube_id : nil
+  has_yt_thumb = resource.video? && yt_id.present?
+
+  gi_label = case resource.gi_nogi.to_s
+             when "gi_only"   then "Gi"
+             when "nogi_only" then "No-Gi"
+             else nil
+             end
+%>
+
+<%# ─── Thumbnail block — reused between styles ─────────────────────────── %>
+<% thumbnail = capture do %>
+  <% if has_yt_thumb %>
+    <div class="relative w-full h-full overflow-hidden bg-slate-900">
+      <img src="https://img.youtube.com/vi/<%= yt_id %>/hqdefault.jpg"
+           alt=""
+           loading="lazy"
+           class="absolute inset-0 w-full h-full object-cover" />
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="w-12 h-12 rounded-full bg-black/55 backdrop-blur-sm flex items-center justify-center ring-1 ring-white/20">
+          <svg viewBox="0 0 24 24" class="w-5 h-5 text-white translate-x-[1px]" fill="currentColor">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  <% elsif rtype == "match_footage" %>
+    <div class="relative w-full h-full overflow-hidden bg-gradient-to-br from-slate-800 to-slate-950">
+      <div class="absolute top-2 left-2 text-[10px] font-mono tracking-wider text-white/40 uppercase">match footage</div>
+      <div class="absolute inset-0 flex items-center justify-center text-white/30">
+        <span style="font-family: Georgia, serif; font-size: clamp(56px, 22%, 96px); line-height: 1;">◐</span>
+      </div>
+    </div>
+  <% else %>
+    <div class="relative w-full h-full overflow-hidden <%= panel_bg.fetch(rtype, 'bg-gray-50') %>">
+      <div class="absolute top-2 left-2 text-[10px] font-mono tracking-wider uppercase opacity-50"><%= rt_label.downcase %></div>
+      <div class="absolute inset-0 flex items-center justify-center <%= panel_glyph_color.fetch(rtype, 'text-gray-300') %>">
+        <span style="font-family: Georgia, serif; font-size: clamp(56px, 22%, 96px); line-height: 1;"><%= panel_glyph.fetch(rtype, '•') %></span>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<%# ─── Badge row — reused between styles ───────────────────────────────── %>
+<% meta_badges = capture do %>
+  <span class="inline-flex items-center font-semibold rounded-full uppercase tracking-wider px-2 py-0.5 text-[11px] <%= rt_class %>">
+    <%= rt_label %>
+  </span>
+  <% if resource.foundational? %>
+    <span class="inline-flex items-center gap-1 font-semibold rounded-full bg-indigo-50 text-indigo-600 ring-1 ring-indigo-200 px-2 py-0.5 text-[11px]">
+      <svg viewBox="0 0 12 12" class="w-2.5 h-2.5" fill="currentColor">
+        <path d="M6 0L7.5 4.5L12 6L7.5 7.5L6 12L4.5 7.5L0 6L4.5 4.5Z" />
+      </svg>
+      Foundational
+    </span>
+  <% end %>
+  <% if gi_label %>
+    <span class="inline-flex items-center font-semibold rounded-full px-2 py-0.5 text-[11px] <%= gi_label == 'Gi' ? 'bg-stone-100 text-stone-700 ring-1 ring-stone-200' : 'bg-slate-800 text-slate-50' %>">
+      <%= gi_label %>
+    </span>
+  <% end %>
+<% end %>
+
+<% if style == :compact %>
+  <%#─── Compact row variant ─────────────────────────────────────────────── %>
+  <%= link_to resource_path(resource),
+        class: "group block bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 overflow-hidden" do %>
+    <div class="flex items-center gap-3 p-2.5 pr-4">
+      <div class="w-20 h-20 shrink-0 rounded-lg overflow-hidden">
+        <%= thumbnail %>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+          <%= meta_badges %>
+        </div>
+        <h3 class="font-semibold text-gray-900 text-sm leading-snug truncate group-hover:text-slate-700">
+          <%= resource.title %>
+        </h3>
+        <div class="flex flex-wrap gap-1 mt-1.5">
+          <% resource.techniques.first(2).each do |t| %>
+            <% tb = technique_badge.fetch(t.technique_type.to_s, "bg-gray-100 text-gray-600 ring-1 ring-gray-200") %>
+            <span class="inline-flex items-center font-medium rounded-full px-1.5 py-0.5 text-[10px] <%= tb %>">
+              <%= t.name %>
+            </span>
+          <% end %>
+          <% resource.positions.first(1).each do |p| %>
+            <span class="inline-flex items-center font-medium rounded-full bg-gray-100 text-gray-700 px-1.5 py-0.5 text-[10px]">
+              <span class="w-1 h-1 rounded-full bg-gray-400 mr-1.5"></span><%= p.name %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+      <svg class="shrink-0 w-3.5 h-3.5 text-gray-300 group-hover:text-gray-500 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+    </div>
+  <% end %>
+
+<% else %>
+  <%#─── Cinematic (default) ─────────────────────────────────────────────── %>
+  <%= link_to resource_path(resource),
+        class: "group block bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 overflow-hidden" do %>
+    <div class="flex">
+      <div class="w-[45%] shrink-0 self-stretch">
+        <div class="h-full" style="aspect-ratio: 16/9;">
+          <%= thumbnail %>
+        </div>
+      </div>
+      <div class="flex-1 min-w-0 p-5 flex flex-col gap-3">
+        <div class="flex items-center gap-2 flex-wrap">
+          <%= meta_badges %>
+        </div>
+        <div>
+          <h3 class="font-bold text-gray-900 text-lg leading-snug tracking-tight line-clamp-2 group-hover:text-slate-700">
+            <%= resource.title %>
+          </h3>
+          <% if resource.instructor_name.present? %>
+            <p class="text-sm text-gray-500 mt-1"><%= resource.instructor_name %></p>
+          <% end %>
+        </div>
+        <div class="mt-auto flex flex-wrap gap-1.5">
+          <% resource.techniques.first(3).each do |t| %>
+            <% tb = technique_badge.fetch(t.technique_type.to_s, "bg-gray-100 text-gray-600 ring-1 ring-gray-200") %>
+            <span class="inline-flex items-center font-medium rounded-full px-2 py-0.5 text-[11px] <%= tb %>">
+              <%= t.name %>
+            </span>
+          <% end %>
+          <% resource.positions.first(2).each do |p| %>
+            <span class="inline-flex items-center font-medium rounded-full bg-gray-100 text-gray-700 px-2 py-0.5 text-[11px]">
+              <span class="w-1 h-1 rounded-full bg-gray-400 mr-1.5"></span><%= p.name %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>
